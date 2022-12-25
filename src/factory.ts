@@ -54,9 +54,7 @@ export function createForm<Values extends AnyFormValues>(
 
         const fieldConfig = fieldsConfigs[fieldName]
 
-        const field = createField(fieldName, fieldConfig, domain, {
-            sid: fieldName
-        })
+        const field = createField(fieldName, fieldConfig, domain)
 
         fields[fieldName] = field
         dirtyFlagsArr.push(field.$isDirty)

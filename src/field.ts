@@ -25,7 +25,6 @@ export function createField(
     fieldName: string,
     fieldConfig: FieldConfig<any>,
     domain?: Domain,
-    effectorData?: any,
 ): Field<any> {
     const initValue = typeof fieldConfig.init === "function"
         ? fieldConfig.init()
@@ -35,18 +34,18 @@ export function createField(
         domain,
         existing: fieldConfig.units?.$initialValue,
         init: initValue,
-    }, effectorData)
+    }, { sid: `${fieldName}-initialValue`})
     const $value = createFormUnit.store({
         domain,
         existing: fieldConfig.units?.$value,
         init: initValue,
-    }, effectorData)
+    }, { sid: `${fieldName}-value`})
 
     const $errors = createFormUnit.store<ValidationError[]>({
         domain,
         existing: fieldConfig.units?.$errors,
         init: [],
-    }, effectorData)
+    }, { sid: `${fieldName}-errors`})
 
 
     const $firstError = $errors.map(
@@ -61,7 +60,7 @@ export function createField(
         domain,
         existing: fieldConfig.units?.$isTouched,
         init: false,
-    }, effectorData)
+    }, `${fieldName}-initialValue`)
 
     const onChange = createFormUnit.event({
         domain,
