@@ -96,6 +96,10 @@ export function createForm<Values extends AnyFormValues>(
         existing: units?.formValidated,
     })
 
+    const setInitial = createFormUnit.event<Partial<AnyFormValues>>({
+        domain,
+        existing: units?.setInitial as Event<Partial<AnyFormValues>>,
+    })
 
     const setForm = createFormUnit.event<Partial<AnyFormValues>>({
         domain,
@@ -138,7 +142,14 @@ export function createForm<Values extends AnyFormValues>(
         const fieldConfig = fieldsConfigs[fieldName]
         const field = fields[fieldName]
 
-        bindChangeEvent(field, setForm, resetForm, resetTouched, resetValues)
+        bindChangeEvent(
+            field, 
+            setForm, 
+            resetForm,
+            resetTouched, 
+            resetValues,
+            setInitial, 
+        )
 
         if (!fieldConfig.rules) continue
 
@@ -185,6 +196,7 @@ export function createForm<Values extends AnyFormValues>(
         reset: resetForm,
         resetValues,
         resetErrors,
+        setInitial,
         setForm,
         set: setForm,
         formValidated,

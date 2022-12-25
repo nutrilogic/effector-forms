@@ -39,6 +39,7 @@ export type FieldData<Value> = {
 
 export type Field<Value> = {
   name: string
+  $initialValue: Store<Value>
   $value: Store<Value>
   $errors: Store<ValidationError<Value>[]>
   $firstError: Store<ValidationError<Value> | null>
@@ -72,6 +73,7 @@ export type FieldConfig<Value> = {
   filter?: Store<boolean> | FilterFunc<Value>
   validateOn?: ValidationEvent[]
   units?: {
+    $initialValue: Store<Value>
     $value?: Store<Value>
     $errors?: Store<ValidationError<Value>[]>
     $isTouched?: Store<boolean>
@@ -127,6 +129,7 @@ export type FormConfig<Values extends AnyFormValues> = {
     resetErrors?: Event<void>
     formValidated?: Event<Values>
     setForm?: Event<Partial<AnyFormValues>>
+    setInitial?: Event<Partial<AnyFormValues>>
   }
 }
 
@@ -147,6 +150,7 @@ export type Form<Values extends AnyFormValues> = {
   validate: Event<void>
   reset: Event<void>
   set: Event<Partial<Values>>
+  setInitial: Event<Partial<Values>>
   setForm: Event<Partial<Values>>
   resetTouched: Event<void>
   resetValues: Event<void>

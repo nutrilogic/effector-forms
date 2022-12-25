@@ -103,6 +103,7 @@ type Result<Values extends AnyFormValues> = {
   errorText: (fieldName: keyof Values, map?: ErrorTextMap) => string
   submit: (p: void) => void
   reset: (p: void) => void
+  setInitial: (p: Partial<Values>) => Partial<Values>
   setForm: (p: Partial<Values>) => Partial<Values>
   set: (p: Partial<Values>) => Partial<Values>
   formValidated: (p: Values) => Values
@@ -183,6 +184,7 @@ export function useForm<Values extends AnyFormValues>(
         error,
         errorText,
         reset: useUnit(form.reset),
+        setInitial: useUnit(form.setInitial),
         submit: useUnit(form.submit),
         setForm: useUnit(form.setForm),
         set: useUnit(form.setForm), // set form alias

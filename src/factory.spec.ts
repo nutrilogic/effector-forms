@@ -661,7 +661,6 @@ test("reset values", () => {
     expect(form.fields.email.$firstError.getState()).toBeNull()
     expect(form.fields.password.$value.getState()).toBe("123")
     expect(form.fields.password.$firstError.getState()).toBeNull()
-
 })
 
 

@@ -31,6 +31,11 @@ export function createField(
         ? fieldConfig.init()
         : fieldConfig.init
 
+    const $initialValue = createFormUnit.store({
+        domain,
+        existing: fieldConfig.units?.$initialValue,
+        init: initValue,
+    }, effectorData)
     const $value = createFormUnit.store({
         domain,
         existing: fieldConfig.units?.$value,
@@ -48,7 +53,9 @@ export function createField(
         (errors) => errors[0] ? errors[0] : null
     )
 
-    const $isDirty = $value.map((value) => value !== initValue)
+    const $isDirty = combine($initialValue, $value, 
+        (initialValue, value) => value !== initialValue
+    )
 
     const $touched = createFormUnit.store({
         domain,
@@ -106,6 +113,7 @@ export function createField(
     return {
         changed,
         name: fieldName,
+        $initialValue,
         $value,
         $errors,
         $firstError,
@@ -262,6 +270,7 @@ effectorData?: any): void {
 
 export function bindChangeEvent(
     {
+        $initialValue,
         $value,
         $touched,
         onChange,
@@ -274,6 +283,7 @@ export function bindChangeEvent(
     resetForm: Event<void>,
     resetTouched: Event<void>,
     resetValues: Event<void>,
+    setInitial: Event<Partial<AnyFormValues>>,
 ): void {
 
     $touched
@@ -286,6 +296,19 @@ export function bindChangeEvent(
         target: changed,
     })
 
+    $initialValue.on(
+        setInitial,
+        (curr, updateSet) => updateSet.hasOwnProperty(name)
+            ? updateSet[name]
+            : curr
+    )
+
+    sample({
+        clock: [reset, resetValue, resetValues, resetForm],
+        source: $initialValue,
+        target: $value,
+    })
+
     $value
         .on(changed, (_, value) => value)
         .on(
@@ -294,6 +317,4 @@ export function bindChangeEvent(
                 ? updateSet[name]
                 : curr
         )
-        .reset(reset, resetValue, resetValues, resetForm)
-
 }
