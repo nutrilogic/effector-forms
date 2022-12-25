@@ -8,36 +8,7 @@ import commonjs from "@rollup/plugin-commonjs"
 import pkg from "./package.json"
 import babelConfig from "./babel.config.json"
 
-const isScope = process.env.SCOPE === "true"
-const legacySSRAlias = process.env.LEGACY_SSR_ALIAS === "true"
-
 const extensions = [".js", ".ts", ".tsx", ".jsx"]
-let paths = pkg.exports["."]
-
-if (isScope) {
-    if (legacySSRAlias) {
-        paths = pkg.exports["./ssr"]
-    } else {
-        paths = pkg.exports["./scope"]
-    }
-}
-
-if (isScope) {
-    babelConfig.plugins = babelConfig.plugins || []
-    babelConfig.plugins.push(
-        [
-            "module-resolver",
-            {
-                "alias": {
-                    "effector-react": legacySSRAlias 
-                        ? "effector-react/ssr"
-                        : "effector-react/scope"
-                }
-            }
-        ]
-    )
-}
-
 
 const config = {
     external: [
@@ -47,37 +18,15 @@ const config = {
     input: "src/index.ts",
     output: [
         {
-            file: paths.require,
+            file: pkg.main,
             format: "cjs",
             sourcemap: true,
         },
         {
-            file: paths.import,
+            file: pkg.module,
             format: "es",
             sourcemap: true,
         },
-    ],
-    plugins: [
-        typescript({ tsconfig: "./tsconfig.json" }),
-        replace({
-            "process.env.IS_SCOPE_BUILD": `"${isScope}"`,
-            "process.env.IS_LEGACY_SSR_BUILD": `"${legacySSRAlias}"`,
-            "preventAssignment": true,
-        }),
-        babel({
-            babelHelpers: "bundled",
-            exclude: "node_modules/**",
-            extensions,
-            ...babelConfig,
-        }),
-        nodeResolve({ extensions }),
-        commonjs({ extensions }),
-        terser(),
-    ]
-}
-
-if (!isScope) {
-    config.output.push(...[
         {
             file: pkg["umd:main"],
             format: "umd",
@@ -98,7 +47,22 @@ if (!isScope) {
                 "effector-react": "effectorReact",
             },
         }
-    ])
+    ],
+    plugins: [
+        typescript({ tsconfig: "./tsconfig.json" }),
+        replace({
+            "preventAssignment": true,
+        }),
+        babel({
+            babelHelpers: "bundled",
+            exclude: "node_modules/**",
+            extensions,
+            ...babelConfig,
+        }),
+        nodeResolve({ extensions }),
+        commonjs({ extensions }),
+        terser(),
+    ]
 }
 
 
