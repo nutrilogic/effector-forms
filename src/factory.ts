@@ -32,6 +32,19 @@ function createFormValuesStore(
     return combine(shape)
 }
 
+function createFormInitialValuesStore(
+    fields: AnyFields
+): Store<AnyFormValues> {
+    const shape: { [key: string]: Store<any> } = {}
+
+    for (const fieldName in fields) {
+        if (!fields.hasOwnProperty(fieldName)) continue
+        shape[fieldName] = fields[fieldName].$initialValue
+    }
+
+    return combine(shape)
+}
+
 export function createForm<Values extends AnyFormValues>(
     config: FormConfig<Values>
 ) {
@@ -62,6 +75,8 @@ export function createForm<Values extends AnyFormValues>(
     }
 
     const $form = createFormValuesStore(fields)
+    const $initialValues = createFormInitialValuesStore(fields)
+
     const $eachValid = eachValid(fields)
     const $isFormValid = $filter
         ? combine($eachValid, $filter, (valid, filter) => valid && filter)
@@ -183,6 +198,7 @@ export function createForm<Values extends AnyFormValues>(
     return {
         fields,
         $values: $form,
+        $initialValues,
         $eachValid,
         $isValid: $eachValid,
         $isDirty: $isDirty,

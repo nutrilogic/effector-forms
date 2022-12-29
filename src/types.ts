@@ -137,6 +137,7 @@ export type FormConfig<Values extends AnyFormValues> = {
 export type Form<Values extends AnyFormValues> = {
   fields: FormFields<Values>
   $values: Store<Values>
+  $initialValues: Store<Values>
   $eachValid: Store<boolean>
   $isValid: Store<boolean>
   $isDirty: Store<boolean>
